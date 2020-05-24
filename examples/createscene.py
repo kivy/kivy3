@@ -1,15 +1,14 @@
-import os
-import kivy3
 from kivy.app import App
-from kivy.uix.floatlayout import FloatLayout
 from kivy.clock import Clock
-from kivy3 import Mesh, Material
-from kivy3 import Scene, Renderer, PerspectiveCamera, OrthographicCamera
-from kivy3.extras.geometries import BoxGeometry, CylinderGeometry, SphereGeometry
-from kivy3.loaders import OBJLoader, STLLoader
-
-from kivy.graphics import Color, Rectangle
-
+from kivy.uix.floatlayout import FloatLayout
+from kivy3 import Material
+from kivy3 import Mesh
+from kivy3 import PerspectiveCamera
+from kivy3 import Renderer
+from kivy3 import Scene
+from kivy3.extras.geometries import SphereGeometry
+from kivy3.loaders import STLLoader
+import os
 
 _this_path = os.path.dirname(os.path.realpath(__file__))
 shader_file = os.path.join(_this_path, "./blinnphong.glsl")
@@ -19,44 +18,38 @@ stl_file = os.path.join(_this_path, "./test.stl")
 
 class SceneApp(App):
     def build(self):
-        root = FloatLayout()
+        renderer = Renderer(shader_file=shader_file)
+        renderer.set_clear_color((0.16, 0.30, 0.44, 1.0))
 
-        self.renderer = Renderer(shader_file=shader_file)
-        self.renderer.set_clear_color((0.16, 0.30, 0.44, 1.0))
+        loader = STLLoader()
 
-        scene = Scene()
-        # geometry = CylinderGeometry(0.5, 2)
         geometry = SphereGeometry(1)
-        # geometry = BoxGeometry(1, 1, 1)
         material = Material(
             color=(0.3, 0.0, 0.3), diffuse=(0.3, 0.3, 0.3), specular=(0.0, 0.0, 0.0)
         )
+        self.item = loader.load(stl_file, material)
 
-        loader = STLLoader()
-        obj = loader.load(stl_file, material)
-        self.item = obj
-
+        scene = Scene()
         scene.add(self.item)
 
         self.cube = Mesh(geometry, material)
         self.item.pos.z = -1.5
-        # self.cube.pos.z=-5
+
         camera = PerspectiveCamera(75, 0.3, 0.5, 1000)
-        # camera = OrthographicCamera()
+        
+        def _adjust_aspect(inst, val):
+            rsize = renderer.size
+            aspect = rsize[0] / float(rsize[1])
+            renderer.camera.aspect = aspect
+        renderer.bind(size=_adjust_aspect)
+        renderer.render(scene, camera)
 
-        # scene.add(self.cube)
-        self.renderer.render(scene, camera)
-
-        root.add_widget(self.renderer)
+        root = FloatLayout()
+        root.add_widget(renderer)
         Clock.schedule_interval(self._rotate_cube, 1 / 20)
-        self.renderer.bind(size=self._adjust_aspect)
 
         return root
 
-    def _adjust_aspect(self, inst, val):
-        rsize = self.renderer.size
-        aspect = rsize[0] / float(rsize[1])
-        self.renderer.camera.aspect = aspect
 
     def _rotate_cube(self, dt):
         self.cube.rotation.x += 1

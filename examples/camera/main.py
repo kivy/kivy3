@@ -1,11 +1,13 @@
-import os
-import kivy3
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
-from kivy3 import Scene, Renderer, PerspectiveCamera, Vector3
-from kivy3.loaders import OBJMTLLoader
 from kivy.uix.floatlayout import FloatLayout
+from kivy3 import PerspectiveCamera
+from kivy3 import Renderer
+from kivy3 import Scene
+from kivy3 import Vector3
+from kivy3.loaders import OBJMTLLoader
+import os
 
 # Resources pathes
 _this_path = os.path.dirname(os.path.realpath(__file__))
@@ -14,33 +16,41 @@ obj_file = os.path.join(_this_path, "../textures/orion.obj")
 mtl_file = os.path.join(_this_path, "../textures/orion.mtl")
 
 
-class MainApp(App):
+class CameraExample(App):
+    """This example demonstrates navigation using the 
+    scene camera
+    """
+
     def build(self):
-        self.look_at = Vector3(0, 0, -1)
-        root = FloatLayout()
-        self.renderer = Renderer(shader_file=shader_file)
-        scene = Scene()
-        self.camera = PerspectiveCamera(75, 1, 1, 1000)
-        self.camera.pos.z = 5
+        renderer = Renderer(shader_file=shader_file)
+
         loader = OBJMTLLoader()
         obj = loader.load(obj_file, mtl_file)
-        self._keyboard = Window.request_keyboard(self._keyboard_closed, self)
-        self._keyboard.bind(on_key_down=self._on_keyboard_down)
 
+        scene = Scene()
         scene.add(*obj.children)
 
-        self.renderer.render(scene, self.camera)
+        self.camera = PerspectiveCamera(75, 1, 1, 1000)
+        self.camera.pos.z = 5
+        renderer.render(scene, self.camera)
+
+        def _adjust_aspect(inst, val):
+            rsize = renderer.size
+            aspect = rsize[0] / float(rsize[1])
+            renderer.camera.aspect = aspect
+        renderer.bind(size=_adjust_aspect)
+
+        self.look_at = Vector3(0, 0, -1)
+        self._keyboard = Window.request_keyboard(self._keyboard_closed, root)
+        self._keyboard.bind(on_key_down=self._on_keyboard_down)
+
         self.orion = scene.children[0]
 
-        root.add_widget(self.renderer)
-        self.renderer.bind(size=self._adjust_aspect)
         Clock.schedule_interval(self._rotate_obj, 1 / 20)
+        root = FloatLayout()
+        root.add_widget(renderer)
         return root
 
-    def _adjust_aspect(self, inst, val):
-        rsize = self.renderer.size
-        aspect = rsize[0] / float(rsize[1])
-        self.renderer.camera.aspect = aspect
 
     def _keyboard_closed(self):
         self._keyboard.unbind(on_key_down=self._on_keyboard_down)
@@ -73,4 +83,4 @@ class MainApp(App):
 
 
 if __name__ == "__main__":
-    MainApp().run()
+    CameraExample().run()

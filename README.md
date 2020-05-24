@@ -18,6 +18,7 @@ Install dependencies.
 
     $ ./bin/pip install Cython==0.29.9
     $ ./bin/pip install kivy==1.11.1
+    $ ./bin/pip install pyyaml
     $ ./bin/pip install numpy
     $ ./bin/pip install scipy
     $ ./bin/pip install numpy-stl

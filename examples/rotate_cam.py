@@ -1,19 +1,15 @@
-import os
-import kivy3
 from kivy.app import App
-from kivy.uix.floatlayout import FloatLayout
 from kivy.clock import Clock
-from kivy3 import Mesh, Material
-from kivy3 import Scene, Renderer, PerspectiveCamera
+from kivy.uix.floatlayout import FloatLayout
+from kivy3 import Material
+from kivy3 import Mesh
+from kivy3 import PerspectiveCamera
+from kivy3 import Renderer
+from kivy3 import Scene
+from kivy3.extras.geometries import SphereGeometry
+from kivy3.loaders import STLLoader
 from kivy3.widgets import OrbitControlWidget
-from kivy3.extras.geometries import BoxGeometry, CylinderGeometry, SphereGeometry
-from kivy3.loaders import OBJLoader, STLLoader
-from kivy.uix.widget import Widget
-
-from kivy.graphics import Color, Rectangle
-
-import math
-
+import os
 
 _this_path = os.path.dirname(os.path.realpath(__file__))
 shader_file = os.path.join(_this_path, "./blinnphong.glsl")
@@ -91,9 +87,6 @@ class SceneApp(App):
 
 
 if __name__ == "__main__":
-
-    from kivy.config import Config
-
+    # from kivy.config import Config
     # Config.set('input', 'mouse', 'mouse,disable_multitouch')
-
     SceneApp().run()

@@ -1,10 +1,11 @@
-import os
-import kivy3
 from kivy.app import App
 from kivy.clock import Clock
-from kivy3 import Scene, Renderer, PerspectiveCamera
-from kivy3.loaders import OBJMTLLoader
 from kivy.uix.floatlayout import FloatLayout
+from kivy3 import PerspectiveCamera
+from kivy3 import Renderer
+from kivy3 import Scene
+from kivy3.loaders import OBJMTLLoader
+import os
 
 # Resources pathes
 _this_path = os.path.dirname(os.path.realpath(__file__))
@@ -13,35 +14,41 @@ obj_file = os.path.join(_this_path, "./orion.obj")
 mtl_file = os.path.join(_this_path, "./orion.mtl")
 
 
-class MainApp(App):
+class TextureExample(App):
+    """This example shows how to load in textured models.
+    """
+
     def build(self):
-        root = FloatLayout()
-        self.renderer = Renderer(shader_file=shader_file)
-        scene = Scene()
-        camera = PerspectiveCamera(15, 1, 1, 1000)
+        renderer = Renderer(shader_file=shader_file)
         loader = OBJMTLLoader()
+
         obj = loader.load(obj_file, mtl_file)
 
+        camera = PerspectiveCamera(15, 1, 1, 1000)
+
+        scene = Scene()
         scene.add(*obj.children)
         for obj in scene.children:
             obj.pos.z = -20.0
 
-        self.renderer.render(scene, camera)
-        self.orion = scene.children[0]
+        orion = scene.children[0]
 
-        root.add_widget(self.renderer)
-        self.renderer.bind(size=self._adjust_aspect)
-        Clock.schedule_interval(self._rotate_obj, 1 / 20)
+        Clock.schedule_interval(_rotate_obj, 1 / 20)
+
+        def _rotate_obj(dt):
+            orion.rot.x += 2
+
+        def _adjust_aspect(inst, val):
+            rsize = renderer.size
+            aspect = rsize[0] / float(rsize[1])
+            renderer.camera.aspect = aspect
+        renderer.bind(size=_adjust_aspect)
+
+        renderer.render(scene, camera)
+        root = FloatLayout()
+        root.add_widget(renderer)
         return root
-
-    def _adjust_aspect(self, inst, val):
-        rsize = self.renderer.size
-        aspect = rsize[0] / float(rsize[1])
-        self.renderer.camera.aspect = aspect
-
-    def _rotate_obj(self, dt):
-        self.orion.rot.x += 2
 
 
 if __name__ == "__main__":
-    MainApp().run()
+    TextureExample().run()

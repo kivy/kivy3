@@ -1,49 +1,33 @@
-import os
-import math
 from kivy.app import App
-from kivy.clock import Clock
-
-from kivy3 import (
-    Scene,
-    Renderer,
-    PerspectiveCamera,
-    Geometry,
-    Vector3,
-    Material,
-    Mesh,
-    Face3,
-)
-from kivy3.core.line2 import Line2
+from kivy.uix.floatlayout import FloatLayout
+from kivy3 import Material
+from kivy3 import Mesh
+from kivy3 import PerspectiveCamera
+from kivy3 import Renderer
+from kivy3 import Scene
 from kivy3.extras.geometries import BoxGeometry
 from kivy3.extras.geometries import GridGeometry
-from kivy3.loaders import OBJLoader
-from kivy.uix.floatlayout import FloatLayout
 from kivy3.objects.lines import Lines
+import math
 
 
-class MainApp(App):
+class GridExample(App):
+    """This example demonstrates the use of a grid floor
+    """
+
     def build(self):
-        self.renderer = Renderer()
+        renderer = Renderer()
+        renderer.set_clear_color((0.2, 0.2, 0.2, 1.0))
+
         scene = Scene()
         camera = PerspectiveCamera(45, 1, 0.1, 2500)
-        self.renderer.set_clear_color((0.2, 0.2, 0.2, 1.0))
-
-        self.camera = camera
-        root = ObjectTrackball(camera, 10)
-
-        # add a cube to the environment as an example
-        # NOTE: the grid will be rendered without transparency if it
-        # is added before the box.
-        # This may be because the shader is not called until a 'triangles' mesh is
-        # rendered? Hence the Fragment Shader has not yet been called?
+        
         geometry = BoxGeometry(1, 1, 1)
         material = Material(
             color=(1.0, 1.0, 1.0), diffuse=(1.0, 1.0, 1.0), specular=(0.35, 0.35, 0.35)
         )
         obj = Mesh(geometry, material)
-        scene.add(obj)
 
-        # create a grid on the xz plane
         geometry = GridGeometry(size=(30, 30), spacing=1)
         material = Material(
             color=(1.0, 1.0, 1.0),
@@ -53,19 +37,22 @@ class MainApp(App):
         )
         lines = Lines(geometry, material)
         lines.rotation.x = 90
+
+        scene.add(obj)
         scene.add(lines)
 
-        self.renderer.render(scene, camera)
-        self.renderer.main_light.intensity = 500
+        def _adjust_aspect(inst, val):
+            rsize = renderer.size
+            aspect = rsize[0] / float(rsize[1])
+            renderer.camera.aspect = aspect
+        renderer.bind(size=_adjust_aspect)
 
-        root.add_widget(self.renderer)
-        self.renderer.bind(size=self._adjust_aspect)
+        renderer.render(scene, camera)
+        renderer.main_light.intensity = 500
+
+        root = ObjectTrackball(camera, 10)
+        root.add_widget(renderer)
         return root
-
-    def _adjust_aspect(self, inst, val):
-        rsize = self.renderer.size
-        aspect = rsize[0] / float(rsize[1])
-        self.renderer.camera.aspect = aspect
 
 
 class ObjectTrackball(FloatLayout):
@@ -114,4 +101,4 @@ class ObjectTrackball(FloatLayout):
 
 
 if __name__ == "__main__":
-    MainApp().run()
+    GridExample().run()
