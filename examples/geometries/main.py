@@ -1,92 +1,62 @@
-import os
-import math
 from kivy.app import App
 from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.scatterlayout import ScatterLayout
-from kivy.uix.relativelayout import RelativeLayout
-from kivy.properties import ListProperty
-from kivy.clock import Clock
-from kivy.core.image import Image
-
+from kivy3 import Material
+from kivy3 import Mesh
+from kivy3 import Object3D
 from kivy3 import Scene, Renderer, PerspectiveCamera
-from kivy3.extras.geometries import (
-    PlaneGeometry,
-    ConeGeometry,
-    BoxGeometry,
-    CylinderGeometry,
-    SphereGeometry,
-    GridGeometry,
-)
-from kivy3.extras.objects import ArrowObject, AxisObject
-from kivy3.loaders import URDFLoader
-from kivy3 import Mesh, Material, Object3D
+from kivy3.extras.geometries import BoxGeometry
+from kivy3.extras.geometries import ConeGeometry
+from kivy3.extras.geometries import CylinderGeometry
+from kivy3.extras.geometries import GridGeometry
+from kivy3.extras.geometries import SphereGeometry
 from kivy3.objects.lines import Lines
-from kivy3.widgets import OrbitControlWidget, SelectionWidget, Object3DWidget
-
-from kivy.graphics.opengl import (
-    glEnable,
-    glDisable,
-    GL_DEPTH_TEST,
-    glReadPixels,
-    GL_RGBA,
-    GL_UNSIGNED_BYTE,
-)
-
+from kivy3.widgets import OrbitControlWidget
+import os
 
 _this_path = os.path.dirname(os.path.realpath(__file__))
 shader_file = os.path.join(_this_path, "../blinnphong.glsl")
-obj_file = os.path.join(_this_path, "./monkey.obj")
-stl_file = os.path.join(_this_path, "./test.stl")
-urdf_file = os.path.join(
-    _this_path, "./rs1_description/urdf/generated_rs1_parallel.urdf"
-)
-package_path = os.path.join(_this_path, "./")  # parent of the package path
-arrow_img_file = os.path.join(_this_path, "./assets/icon-rotate-360.png")
-prismatic_arrow_img_file = os.path.join(_this_path, "./assets/icon-arrows.png")
 
 
-class VisualisationWidget(FloatLayout):
-    def __init__(self, **kw):
-        super(VisualisationWidget, self).__init__(**kw)
+class GeometryExample(App):
+    """This example shows how to create different types of
+    Geometry
+    """
 
-        self.renderer = Renderer(shader_file=shader_file)
-        self.renderer.set_clear_color((0.16, 0.30, 0.44, 1.0))
-
-        scene = Scene()
-
-        base = Object3D()
-        # id_color = (1,0,0)
+    def build(self):
         geometry = BoxGeometry(0.5, 0.5, 0.5)
         material = Material(
-            color=(0.3, 0, 0), diffuse=(0.3, 0, 0), specular=(0.3, 0.3, 0.3)
+            color=(0.3, 0, 0),
+            diffuse=(0.3, 0, 0),
+            specular=(0.3, 0.3, 0.3)
         )
-        object1 = Mesh(geometry, material)
-
-        base.add(object1)
+        obj_1 = Mesh(geometry, material)
 
         geometry = CylinderGeometry(0.25, 0.5)
         material = Material(
-            color=(0, 0.3, 0), diffuse=(0, 0.3, 0), specular=(0.3, 0.3, 0.3)
+            color=(0, 0.3, 0),
+            diffuse=(0, 0.3, 0),
+            specular=(0.3, 0.3, 0.3)
         )
-        object = Mesh(geometry, material)
-        object.pos.y = 1
-        base.add(object)
+        obj_2 = Mesh(geometry, material)
+        obj_2.pos.y = 1
 
         geometry = ConeGeometry(0.25, 0.5)
         material = Material(
-            color=(0, 0.3, 0.3), diffuse=(0, 0.3, 0.3), specular=(0.3, 0.3, 0.3)
+            color=(0, 0.3, 0.3),
+            diffuse=(0, 0.3, 0.3),
+            specular=(0.3, 0.3, 0.3)
         )
-        object = Mesh(geometry, material)
-        object.pos.y = -1
-        base.add(object)
+        obj_3 = Mesh(geometry, material)
+        obj_3.pos.y = -1
 
         geometry = SphereGeometry(radius=0.25)
         material = Material(
-            color=(0, 0, 1), diffuse=(0, 0, 1), specular=(0.3, 0.3, 0.3)
+            color=(0, 0, 1),
+            diffuse=(0, 0, 1),
+            specular=(0.3, 0.3, 0.3)
         )
-        object = Mesh(geometry, material)
-        object.pos.x = -1
-        base.add(object)
+        obj_4 = Mesh(geometry, material)
+        obj_4.pos.x = -1
 
         geometry = GridGeometry()
         material = Material(
@@ -95,24 +65,37 @@ class VisualisationWidget(FloatLayout):
             specular=(0.35, 0.35, 0.35),
             transparency=0.3,
         )
-        object = Lines(geometry, material)
-        base.add(object)
+        lines = Lines(geometry, material)
 
+        base = Object3D()
+        base.add(obj_1)
+        base.add(obj_2)
+        base.add(obj_3)
+        base.add(obj_4)
+        base.add(lines)
         base.rot.x = -90
+
+        scene = Scene()
         scene.add(base)
 
-        self.camera = PerspectiveCamera(90, 0.3, 0.1, 1000)
-        self.camera.pos.z = 1.5
-        self.camera.look_at((0, 0, 0))
+        camera = PerspectiveCamera(90, 0.3, 0.1, 1000)
+        camera.pos.z = 1.5
+        camera.look_at((0, 0, 0))
 
-        self.camera.bind_to(self.renderer)
-        self.renderer.render(scene, self.camera)
+        renderer = self.renderer = Renderer(shader_file=shader_file)
+        renderer.bind(size=self._adjust_aspect)
+        renderer.set_clear_color((0.16, 0.30, 0.44, 1.0))
 
-        self.add_widget(self.renderer, index=30)
-        self.orbit = OrbitControlWidget(self.renderer, 4.0)
-        self.add_widget(self.orbit, index=99)
-        # self.add_widget(self.selection_widget, index=98)
-        self.renderer.bind(size=self._adjust_aspect)
+        camera.bind_to(renderer)
+
+        renderer.render(scene, camera)
+
+        orbit = OrbitControlWidget(renderer, 4.0)
+
+        root = FloatLayout()
+        root.add_widget(renderer, index=30)
+        root.add_widget(orbit, index=99)
+        return root
 
     def _adjust_aspect(self, inst, val):
         rsize = self.renderer.size
@@ -120,14 +103,5 @@ class VisualisationWidget(FloatLayout):
         self.renderer.camera.aspect = aspect
 
 
-class VisualisationApp(App):
-    def build(self):
-
-        return VisualisationWidget()
-
-
 if __name__ == "__main__":
-    from kivy.config import Config
-
-    # Config.set('input', 'mouse', 'mouse,disable_multitouch')
-    VisualisationApp().run()
+    GeometryExample().run()
