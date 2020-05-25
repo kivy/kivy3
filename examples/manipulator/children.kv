@@ -1,5 +1,3 @@
-
-
 <BaseBox>
     BoxLayout
         size_hint_x: None
@@ -8,51 +6,67 @@
 
         Label
             text: 'A'
+
         Slider
             on_value: root.theta[0] = self.value
             min: -45
             max: 15
+
         Label
             text: 'B'
+
         Slider
             on_value: root.theta[1] = self.value
+
         Label
             text: 'C'
+
         Slider
             on_value: root.theta[2] = self.value
+
         Label
             text: 'D'
+
         Slider
             on_value: root.theta[3] = self.value
+
         Label
             text: 'E'
+
         Slider
             on_value: root.theta[4] = self.value
+
         Label
             text: 'F'
+
         Slider
             on_value: root.theta[5] = self.value
+
         Label
             text: 'G'
+
         Slider
             on_value: root.theta[6] = self.value
 
-
         Label
             text: 'LIGHT Position'
+
         Slider
             on_value: root.renderer.main_light.pos_x = self.value
             min: -300
             max: 300
+
         Slider
             on_value: root.renderer.main_light.pos_y = self.value
             min: -300
             max: 300
+
         Slider
             on_value:
                 root.renderer.main_light.pos_z = self.value
             min: -300
             max: 300
+
         Slider
             on_value: root.renderer.main_light.intensity = self.value
             min: 1
