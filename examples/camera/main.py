@@ -17,8 +17,7 @@ mtl_file = os.path.join(_this_path, "../textures/orion.mtl")
 
 
 class CameraExample(App):
-    """This example demonstrates navigation using the scene camera
-    """
+    """This example demonstrates navigation using the scene camera."""
 
     def build(self):
         renderer = self.renderer = Renderer(shader_file=shader_file)
