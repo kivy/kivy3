@@ -12,8 +12,6 @@ from kivy3.extras.geometries import BoxGeometry
 import math
 import os
 
-"""Demonstrate relative transform of children of a Mesh object."""
-
 # Resources paths
 _this_path = os.path.dirname(os.path.realpath(__file__))
 shader_file = os.path.join(_this_path, "../extended.glsl")
@@ -43,8 +41,8 @@ JOINT_OFFSET_G = [0, 0, 0]
 
 def create_joint_rectangle(x, y, z):
     geometry = BoxGeometry(x, y, z)
-    for i in range(len(geometry.vertices)):
-        geometry.vertices[i][0] += x / 2
+    for vertice in geometry.vertices:
+        vertice[0] += x / 2
     return geometry
 
 
@@ -140,7 +138,9 @@ class BaseBox(BoxLayout):
 
 
 class ManipulatorExample(App):
-    """This example shows how to manipulate objects in the scene."""
+    """Demonstrate relative transform of children of a Mesh object in the
+    scene.
+    """
 
     joints = []
 
@@ -194,11 +194,7 @@ class ManipulatorExample(App):
             JOINT_SIZE_A[2],
             JOINT_SIZE_A[1]
         )
-        axis_a_geometry = create_joint_rectangle(
-            axis_a_dimensions[0],
-            axis_a_dimensions[1],
-            axis_a_dimensions[2]
-        )
+        axis_a_geometry = create_joint_rectangle(*axis_a_dimensions)
         axis_a_left_mesh = Mesh(axis_a_geometry, material)
         axis_a_right_mesh = Mesh(axis_a_geometry, material)
         self.joints.append(axis_a_left_mesh)
@@ -210,11 +206,7 @@ class ManipulatorExample(App):
             JOINT_SIZE_B[1],
             JOINT_SIZE_B[2],
         )
-        axis_b_geometry = create_joint_rectangle(
-            axis_b_dimensions[0],
-            axis_b_dimensions[1],
-            axis_b_dimensions[2]
-        )
+        axis_b_geometry = create_joint_rectangle(*axis_b_dimensions)
         material = Material(
             color=(1.0, 0.0, 0.0),
             diffuse=(1.0, 0.0, 0.0),
@@ -237,11 +229,7 @@ class ManipulatorExample(App):
             JOINT_SIZE_C[1],
             JOINT_SIZE_C[2],
         )
-        axis_c_geometry = create_joint_rectangle(
-            axis_c_dimensions[0],
-            axis_c_dimensions[1],
-            axis_c_dimensions[2]
-        )
+        axis_c_geometry = create_joint_rectangle(*axis_c_dimensions)
         material = Material(
             color=(1.0, 1.0, 0.0),
             diffuse=(1.0, 1.0, 0.0),
@@ -259,11 +247,7 @@ class ManipulatorExample(App):
             JOINT_SIZE_D[1],
             JOINT_SIZE_D[2],
         )
-        axis_d_geometry = create_joint_rectangle(
-            axis_d_dimensions[0],
-            axis_d_dimensions[1],
-            axis_d_dimensions[2]
-        )
+        axis_d_geometry = create_joint_rectangle(*axis_d_dimensions)
         material = Material(
             color=(1.0, 0.0, 1.0),
             diffuse=(1.0, 0.0, 1.0),
@@ -281,11 +265,7 @@ class ManipulatorExample(App):
             JOINT_SIZE_E[1],
             JOINT_SIZE_E[2],
         )
-        axis_e_geometry = create_joint_rectangle(
-            axis_e_dimensions[0],
-            axis_e_dimensions[1],
-            axis_e_dimensions[2]
-        )
+        axis_e_geometry = create_joint_rectangle(*axis_e_dimensions)
         material = Material(
             color=(0.0, 1.0, 0.0),
             diffuse=(0.0, 1.0, 0.0),
@@ -303,11 +283,7 @@ class ManipulatorExample(App):
             JOINT_SIZE_F[1],
             JOINT_SIZE_F[2],
         )
-        axis_f_geometry = create_joint_rectangle(
-            axis_f_dimensions[0],
-            axis_f_dimensions[1],
-            axis_f_dimensions[2]
-        )
+        axis_f_geometry = create_joint_rectangle(*axis_f_dimensions)
         material = Material(
             color=(0.0, 1.0, 1.0),
             diffuse=(0.0, 1.0, 1.0),
@@ -325,11 +301,7 @@ class ManipulatorExample(App):
             JOINT_SIZE_G[1],
             JOINT_SIZE_G[2],
         )
-        axis_g_geometry = create_joint_rectangle(
-            axis_g_dimensions[0],
-            axis_g_dimensions[1],
-            axis_g_dimensions[2]
-        )
+        axis_g_geometry = create_joint_rectangle(*axis_g_dimensions)
         material = Material(
             color=(1.0, 0.4, 0.1),
             diffuse=(1.0, 0.4, 0.1),
@@ -348,11 +320,7 @@ class ManipulatorExample(App):
             axis_b_dimensions[1],
             axis_b_dimensions[2]
         )
-        base_geometry = create_joint_rectangle(
-            base_dimensions[0],
-            base_dimensions[1],
-            base_dimensions[2]
-        )
+        base_geometry = create_joint_rectangle(*base_dimensions)
         material = Material(
             color=(0.0, 1.0, 1.0),
             diffuse=(0.0, 1.0, 1.0),
