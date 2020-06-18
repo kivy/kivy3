@@ -1,14 +1,46 @@
-import os
-import math
 from kivy.app import App
-from kivy.clock import Clock
-from kivy3 import Scene, Renderer, PerspectiveCamera
-from kivy3.loaders import OBJLoader
 from kivy.uix.floatlayout import FloatLayout
+from kivy3 import PerspectiveCamera
+from kivy3 import Renderer
+from kivy3 import Scene
+from kivy3.loaders import OBJLoader
+import math
+import os
 
 # Resources pathes
 _this_path = os.path.dirname(os.path.realpath(__file__))
 obj_file = os.path.join(_this_path, "./MQ-27.obj")
+
+
+class TrackballExample(App):
+    """This example shows how to use the Trackball-Navigation.
+    """
+
+    def build(self):
+        renderer = Renderer()
+
+        loader = OBJLoader()
+        obj = loader.load(obj_file)
+
+        camera = PerspectiveCamera(15, 1, 100, 2500)
+
+        root = ObjectTrackball(camera, 1500)
+
+        scene = Scene()
+        scene.add(obj)
+
+        renderer.render(scene, camera)
+        renderer.main_light.intensity = 500
+
+        root.add_widget(renderer)
+
+        def _adjust_aspect(inst, val):
+            rsize = renderer.size
+            aspect = rsize[0] / float(rsize[1])
+            renderer.camera.aspect = aspect
+        renderer.bind(size=_adjust_aspect)
+
+        return root
 
 
 class ObjectTrackball(FloatLayout):
@@ -56,31 +88,5 @@ class ObjectTrackball(FloatLayout):
         self.camera.look_at((0, 0, 0))
 
 
-class MainApp(App):
-    def build(self):
-        self.renderer = Renderer()
-        scene = Scene()
-        camera = PerspectiveCamera(15, 1, 100, 2500)
-        loader = OBJLoader()
-        obj = loader.load(obj_file)
-        self.obj3d = obj
-        self.camera = camera
-        root = ObjectTrackball(camera, 1500)
-
-        scene.add(obj)
-
-        self.renderer.render(scene, camera)
-        self.renderer.main_light.intensity = 500
-
-        root.add_widget(self.renderer)
-        self.renderer.bind(size=self._adjust_aspect)
-        return root
-
-    def _adjust_aspect(self, inst, val):
-        rsize = self.renderer.size
-        aspect = rsize[0] / float(rsize[1])
-        self.renderer.camera.aspect = aspect
-
-
 if __name__ == "__main__":
-    MainApp().run()
+    TrackballExample().run()
