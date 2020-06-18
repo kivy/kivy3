@@ -13,30 +13,28 @@ class MainApp(App):
     """
 
     def build(self):
+        root = FloatLayout()
+        renderer = Renderer()
+        scene = Scene()
+        camera = PerspectiveCamera(15, 1, 1, 1000)
         # load obj file
         loader = OBJMTLLoader()
         obj_path = os.path.join(os.path.dirname(__file__), "./testnurbs.obj")
         obj = loader.load(obj_path, "./testnurbs.mtl")
 
-        scene = Scene()
         scene.add(*obj.children)
         for obj in scene.children:
             obj.pos.z = -20
 
-        camera = PerspectiveCamera(15, 1, 1, 1000)
-
-        renderer = self.renderer = Renderer()
-        renderer.bind(size=self._adjust_aspect)
         renderer.render(scene, camera)
-
-        root = FloatLayout()
         root.add_widget(renderer)
-        return root
 
-    def _adjust_aspect(self, inst, val):
-        rsize = self.renderer.size
-        aspect = rsize[0] / float(rsize[1])
-        self.renderer.camera.aspect = aspect
+        def _adjust_aspect(inst, val):
+            rsize = renderer.size
+            aspect = rsize[0] / float(rsize[1])
+            renderer.camera.aspect = aspect
+        renderer.bind(size=_adjust_aspect)
+        return root
 
 
 if __name__ == "__main__":
