@@ -28,7 +28,7 @@ class RotationExample(App):
     """
 
     def build(self):
-        renderer = Renderer(shader_file=shader_file)
+        renderer = self.renderer = Renderer(shader_file=shader_file)
         renderer.set_clear_color(clear_color)
 
         camera = PerspectiveCamera(45, 1, 0.1, 2500)
@@ -143,6 +143,7 @@ class RotationExample(App):
         renderer.render(scene, camera)
         renderer.main_light.intensity = 1000
         renderer.main_light.pos = (10, 10, -10)
+        renderer.bind(size=adjust_aspect)
 
         root.add_widget(renderer)
 
@@ -153,13 +154,12 @@ class RotationExample(App):
         root.controls = controls
         box.add_widget(controls)
 
-        def _adjust_aspect(inst, val):
-            rsize = renderer.size
-            aspect = rsize[0] / float(rsize[1])
-            renderer.camera.aspect = aspect
-        renderer.bind(size=_adjust_aspect)
-
         return box
+
+    def _adjust_aspect(inst, val):
+        rsize = renderer.size
+        aspect = rsize[0] / float(rsize[1])
+        renderer.camera.aspect = aspect
 
 
 class Controls(BoxLayout):
