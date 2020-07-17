@@ -18,7 +18,7 @@ class MainApp(App):
     """
 
     def build(self):
-        renderer = Renderer(shader_file=shader_file)
+        renderer = self.renderer = Renderer(shader_file=shader_file)
         renderer.bind(size=self._adjust_aspect)
 
         # load obj file
