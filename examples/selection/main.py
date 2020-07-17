@@ -21,7 +21,7 @@ class SelectionExample(App):
     """
 
     def build(self):
-        renderer = Renderer(shader_file=shader_file)
+        renderer = self.renderer = Renderer(shader_file=shader_file)
         renderer.set_clear_color((0.16, 0.30, 0.44, 1.0))
 
         selection_widget = SelectionWidget(renderer)
@@ -67,12 +67,7 @@ class SelectionExample(App):
         scene.add(base)
 
         renderer.render(scene, camera)
-
-        def _adjust_aspect(inst, val):
-            rsize = renderer.size
-            aspect = rsize[0] / float(rsize[1])
-            renderer.camera.aspect = aspect
-        renderer.bind(size=_adjust_aspect)
+        renderer.bind(size=self._adjust_aspect)
 
         orbit = OrbitControlWidget(renderer, 4.0)
         root = FloatLayout()
@@ -81,6 +76,11 @@ class SelectionExample(App):
         root.add_widget(selection_widget, index=98)
 
         return root
+
+    def _adjust_aspect(self, inst, val):
+        rsize = self.renderer.size
+        aspect = rsize[0] / float(rsize[1])
+        self.renderer.camera.aspect = aspect
 
 
 if __name__ == "__main__":
