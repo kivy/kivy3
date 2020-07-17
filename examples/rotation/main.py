@@ -143,7 +143,7 @@ class RotationExample(App):
         renderer.render(scene, camera)
         renderer.main_light.intensity = 1000
         renderer.main_light.pos = (10, 10, -10)
-        renderer.bind(size=adjust_aspect)
+        renderer.bind(size=self._adjust_aspect)
 
         root.add_widget(renderer)
 
@@ -156,10 +156,10 @@ class RotationExample(App):
 
         return box
 
-    def _adjust_aspect(inst, val):
-        rsize = renderer.size
+    def _adjust_aspect(self, inst, val):
+        rsize = self.renderer.size
         aspect = rsize[0] / float(rsize[1])
-        renderer.camera.aspect = aspect
+        self.renderer.camera.aspect = aspect
 
 
 class Controls(BoxLayout):
