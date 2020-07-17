@@ -14,7 +14,8 @@ class MainApp(App):
 
     def build(self):
         root = FloatLayout()
-        renderer = Renderer()
+        renderer = self.renderer = Renderer()
+        renderer.bind(size=self._adjust_aspect)
         scene = Scene()
         camera = PerspectiveCamera(15, 1, 1, 1000)
 
@@ -42,12 +43,12 @@ class MainApp(App):
         renderer.render(scene, camera)
         root.add_widget(renderer)
 
-        def _adjust_aspect(inst, val):
-            rsize = renderer.size
-            aspect = rsize[0] / float(rsize[1])
-            renderer.camera.aspect = aspect
-        renderer.bind(size=_adjust_aspect)
         return root
+
+    def _adjust_aspect(self, inst, val):
+        rsize = self.renderer.size
+        aspect = rsize[0] / float(rsize[1])
+        self.renderer.camera.aspect = aspect
 
 
 if __name__ == "__main__":
