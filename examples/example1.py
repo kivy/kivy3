@@ -19,6 +19,7 @@ class MainApp(App):
 
     def build(self):
         renderer = Renderer(shader_file=shader_file)
+        renderer.bind(size=self._adjust_aspect)
 
         # load obj file
         loader = OBJLoader()
@@ -31,16 +32,15 @@ class MainApp(App):
         for obj in scene.children:
             obj.pos.z = -20
 
-        def _adjust_aspect(inst, val):
-            rsize = renderer.size
-            aspect = rsize[0] / float(rsize[1])
-            renderer.camera.aspect = aspect
-        renderer.bind(size=_adjust_aspect)
-
         root = FloatLayout()
         renderer.render(scene, camera)
         root.add_widget(renderer)
         return root
+
+    def _adjust_aspect(self, inst, val):
+        rsize = self.renderer.size
+        aspect = rsize[0] / float(rsize[1])
+        self.renderer.camera.aspect = aspect
 
 
 if __name__ == "__main__":
