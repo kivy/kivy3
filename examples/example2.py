@@ -13,12 +13,17 @@ class MainApp(App):
     """
 
     def build(self):
+        root = FloatLayout()
+        renderer = self.renderer = Renderer()
+        renderer.bind(size=self._adjust_aspect)
+        scene = Scene()
+        camera = PerspectiveCamera(15, 1, 1, 1000)
+
         # load obj file
         loader = OBJLoader()
         obj_path = os.path.join(os.path.dirname(__file__), "./testnurbs-2.obj")
         obj = loader.load(obj_path)
 
-        scene = Scene()
         scene.add(*obj.children)
         for obj in scene.children:
             obj.pos.z = -20
@@ -35,14 +40,9 @@ class MainApp(App):
         scene.children[2].material.diffuse = 0.0, 0.0, 0.7  # blue
         scene.children[3].material.diffuse = 0.7, 0.7, 0.0  # yellow
 
-        camera = PerspectiveCamera(15, 1, 1, 1000)
-
-        renderer = self.renderer = Renderer()
-        renderer.bind(size=self._adjust_aspect)
         renderer.render(scene, camera)
-
-        root = FloatLayout()
         root.add_widget(renderer)
+
         return root
 
     def _adjust_aspect(self, inst, val):
