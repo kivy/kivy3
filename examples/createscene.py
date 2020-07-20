@@ -12,11 +12,11 @@ import os
 
 _this_path = os.path.dirname(os.path.realpath(__file__))
 shader_file = os.path.join(_this_path, "./blinnphong.glsl")
+obj_file = os.path.join(_this_path, "./monkey.obj")
 stl_file = os.path.join(_this_path, "./test.stl")
 
 
 class SceneApp(App):
-
     def build(self):
         renderer = self.renderer = Renderer(shader_file=shader_file)
         renderer.set_clear_color((0.16, 0.30, 0.44, 1.0))
@@ -25,7 +25,9 @@ class SceneApp(App):
 
         geometry = SphereGeometry(1)
         material = Material(
-            color=(0.3, 0.0, 0.3), diffuse=(0.3, 0.3, 0.3), specular=(0.0, 0.0, 0.0)
+            color=(0.3, 0.0, 0.3),
+            diffuse=(0.3, 0.3, 0.3),
+            specular=(0.0, 0.0, 0.0)
         )
         self.item = loader.load(stl_file, material)
 
