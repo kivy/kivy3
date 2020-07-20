@@ -21,7 +21,7 @@ class SphereExample(App):
     """
 
     def build(self):
-        renderer = Renderer(shader_file=shader_file)
+        renderer = self.renderer = Renderer(shader_file=shader_file)
         renderer.set_clear_color((0.2, 0.2, 0.2, 1.0))
 
         camera = PerspectiveCamera(45, 1, 0.1, 2500)
@@ -55,16 +55,16 @@ class SphereExample(App):
 
         renderer.render(scene, camera)
         renderer.main_light.intensity = 500
-
-        def _adjust_aspect(inst, val):
-            rsize = renderer.size
-            aspect = rsize[0] / float(rsize[1])
-            renderer.camera.aspect = aspect
-        renderer.bind(size=_adjust_aspect)
+        renderer.bind(size=self._adjust_aspect)
 
         root = ObjectTrackball(camera, 10)
         root.add_widget(renderer)
         return root
+
+    def _adjust_aspect(self, inst, val):
+        rsize = self.renderer.size
+        aspect = rsize[0] / float(rsize[1])
+        self.renderer.camera.aspect = aspect
 
 
 class ObjectTrackball(FloatLayout):
