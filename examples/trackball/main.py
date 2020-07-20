@@ -17,7 +17,7 @@ class TrackballExample(App):
     """
 
     def build(self):
-        renderer = Renderer()
+        renderer = self.renderer = Renderer()
 
         loader = OBJLoader()
         obj = loader.load(obj_file)
@@ -31,16 +31,16 @@ class TrackballExample(App):
 
         renderer.render(scene, camera)
         renderer.main_light.intensity = 500
+        renderer.bind(size=self._adjust_aspect)
 
         root.add_widget(renderer)
 
-        def _adjust_aspect(inst, val):
-            rsize = renderer.size
-            aspect = rsize[0] / float(rsize[1])
-            renderer.camera.aspect = aspect
-        renderer.bind(size=_adjust_aspect)
-
         return root
+
+    def _adjust_aspect(self, inst, val):
+        rsize = self.renderer.size
+        aspect = rsize[0] / float(rsize[1])
+        self.renderer.camera.aspect = aspect
 
 
 class ObjectTrackball(FloatLayout):
