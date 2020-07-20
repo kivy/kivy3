@@ -19,7 +19,7 @@ class TextureExample(App):
     """
 
     def build(self):
-        renderer = Renderer(shader_file=shader_file)
+        renderer = self.renderer = Renderer(shader_file=shader_file)
         loader = OBJMTLLoader()
 
         obj = loader.load(obj_file, mtl_file)
@@ -38,16 +38,17 @@ class TextureExample(App):
 
         Clock.schedule_interval(_rotate_obj, 1 / 20)
 
-        def _adjust_aspect(inst, val):
-            rsize = renderer.size
-            aspect = rsize[0] / float(rsize[1])
-            renderer.camera.aspect = aspect
-        renderer.bind(size=_adjust_aspect)
+        renderer.bind(size=self._adjust_aspect)
 
         renderer.render(scene, camera)
         root = FloatLayout()
         root.add_widget(renderer)
         return root
+
+    def _adjust_aspect(self, inst, val):
+        rsize = self.renderer.size
+        aspect = rsize[0] / float(rsize[1])
+        self.renderer.camera.aspect = aspect
 
 
 if __name__ == "__main__":
