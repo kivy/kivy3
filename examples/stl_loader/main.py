@@ -18,7 +18,7 @@ class STLLoaderApp(App):
     """
 
     def build(self):
-        renderer = Renderer(shader_file=shaders.blinnphong)
+        renderer = self.renderer = Renderer(shader_file=shaders.blinnphong)
         renderer.set_clear_color((0.16, 0.30, 0.44, 1.0))
 
         loader = STLLoader()
@@ -33,22 +33,22 @@ class STLLoaderApp(App):
         scene = Scene()
         scene.add(obj)
 
-        camera = PerspectiveCamera(75, 0.3, 0.5, 1000)
+        camera = self.camera = PerspectiveCamera(75, 0.3, 0.5, 1000)
         camera.pos.z = 1.5
         camera.look_at((0, 0, 0))
         camera.bind_to(renderer)
 
         renderer.render(scene, camera)
-
-        def adjust_aspect(inst, val):
-            size = renderer.size
-            camera.aspect = size[0] / float(size[1])
-        renderer.bind(size=adjust_aspect)
+        renderer.bind(size=self._adjust_aspect)
 
         root = FloatLayout()
         root.add_widget(renderer)
         root.add_widget(OrbitControlWidget(renderer, 4.0))
         return root
+
+    def _adjust_aspect(self, inst, val):
+        size = self.renderer.size
+        self.camera.aspect = size[0] / float(size[1])
 
 
 if __name__ == "__main__":
