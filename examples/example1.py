@@ -18,22 +18,22 @@ class MainApp(App):
     """
 
     def build(self):
+        renderer = self.renderer = Renderer(shader_file=shader_file)
+        renderer.bind(size=self._adjust_aspect)
+
         # load obj file
         loader = OBJLoader()
         obj = loader.load(obj_path)
+
+        camera = PerspectiveCamera(15, 1, 1, 1000)
 
         scene = Scene()
         scene.add(*obj.children)
         for obj in scene.children:
             obj.pos.z = -20
 
-        camera = PerspectiveCamera(15, 1, 1, 1000)
-
-        renderer = self.renderer = Renderer(shader_file=shader_file)
-        renderer.bind(size=self._adjust_aspect)
-        renderer.render(scene, camera)
-
         root = FloatLayout()
+        renderer.render(scene, camera)
         root.add_widget(renderer)
         return root
 
